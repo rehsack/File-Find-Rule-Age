@@ -17,4 +17,4 @@ no_index:
 requires: 
   DateTime: 0.42
   File::Find::Rule: 0.30
-version: 0.001.001
+version: 0.002
