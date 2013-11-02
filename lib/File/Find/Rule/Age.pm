@@ -7,7 +7,7 @@ use File::Find::Rule;
 use base qw( File::Find::Rule );
 use vars qw( $VERSION @EXPORT );
 @EXPORT  = @File::Find::Rule::EXPORT;
-$VERSION = "0.300"; 
+$VERSION = "0.301"; 
 
 use DateTime;
 use File::stat;
