@@ -7,38 +7,39 @@ use File::Find::Rule;
 use base qw( File::Find::Rule );
 use vars qw( $VERSION @EXPORT );
 @EXPORT  = @File::Find::Rule::EXPORT;
-$VERSION = "0.301"; 
+$VERSION = "0.301";
 
 use DateTime;
 use File::stat;
 
-sub File::Find::Rule::age {
-    my $self = shift()->_force_object;
-    
-    my ( $criterion, $age ) = @_;
-        
-    my ( $interval, $unit ) = ( $age =~ /^(\d+)([DWMYhms])$/ );
-    if ( ! $interval or ! $unit ) {
-        return;
-    } else {
-        my %mapping = (
-            "D" => "days",
-            "W" => "weeks",
-            "M" => "months",
-            "Y" => "years",
-            "h" => "hours",
-            "m" => "minutes",
-            "s" => "seconds", );
-        $self->exec( sub {
-                         my $dt = DateTime->now;
-                         $dt->subtract( $mapping{$unit} => $interval );
-                         my $compare_to = $dt->epoch;
-                         my $mtime = stat( $_ )->mtime;
-                         return $criterion eq "older" ?
-                            $mtime < $compare_to :
-                            $mtime > $compare_to;
-                     } );
-    }
+my %mapping = (
+    "D" => "days",
+    "W" => "weeks",
+    "M" => "months",
+    "Y" => "years",
+    "h" => "hours",
+    "m" => "minutes",
+    "s" => "seconds",
+);
+
+sub File::Find::Rule::age
+{
+    my ( $me, $criterion, $age ) = @_;
+    my ( $interval, $unit ) = ( $age =~ m/^(\d+)([DWMYhms])$/ );
+    return unless ( $interval and $unit );
+
+    my $self = $me->_force_object;
+    $self->exec(
+        sub {
+            my $dt = DateTime->now;
+            $dt->subtract( $mapping{$unit} => $interval );
+            my $compare_to = $dt->epoch;
+            my $mtime      = stat($_)->mtime;
+            return $criterion eq "older"
+              ? $mtime < $compare_to
+              : $mtime > $compare_to;
+        }
+    );
 }
 
 1;
