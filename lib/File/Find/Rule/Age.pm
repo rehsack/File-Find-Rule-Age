@@ -28,18 +28,19 @@ sub File::Find::Rule::age
     my ( $interval, $unit ) = ( $age =~ m/^(\d+)([DWMYhms])$/ );
     return unless ( $interval and $unit );
 
-    my $self = $me->_force_object;
-    $self->exec(
-        sub {
-            my $dt = DateTime->now;
-            $dt->subtract( $mapping{$unit} => $interval );
-            my $compare_to = $dt->epoch;
-            my $mtime      = stat($_)->mtime;
-            return $criterion eq "older"
-              ? $mtime < $compare_to
-              : $mtime > $compare_to;
-        }
-    );
+    my $self     = $me->_force_object;
+    my $sub2exec = $criterion eq "older"
+      ? sub {
+        my $dt = DateTime->now;
+        $dt->subtract( $mapping{$unit} => $interval );
+        stat($_)->mtime < $dt->epoch;
+      }
+      : sub {
+        my $dt = DateTime->now;
+        $dt->subtract( $mapping{$unit} => $interval );
+        stat($_)->mtime > $dt->epoch;
+      };
+    $self->exec($sub2exec);
 }
 
 1;
