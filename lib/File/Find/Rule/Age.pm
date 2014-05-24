@@ -3,6 +3,7 @@ package File::Find::Rule::Age;
 use strict;
 use warnings;
 
+use Carp 'carp';
 use File::Find::Rule;
 use base qw( File::Find::Rule );
 use vars qw( $VERSION @EXPORT );
@@ -22,11 +23,19 @@ my %mapping = (
     "s" => "seconds",
 );
 
+my %criteria = (
+    older => 1,
+    newer => 1,
+);
+
 sub File::Find::Rule::age
 {
     my ( $me, $criterion, $age ) = @_;
     my ( $interval, $unit ) = ( $age =~ m/^(\d+)([DWMYhms])$/ );
-    return unless ( $interval and $unit );
+    return carp "Interval or Unit missing" unless ( $interval and $unit );
+
+    $criterion = lc($criterion);
+    defined $criteria{$criterion} or return carp "Invalid criterion: $criterion";
 
     my $self     = $me->_force_object;
     my $sub2exec = $criterion eq "older"
@@ -52,6 +61,7 @@ File::Find::Rule::Age - rule to match on file age
 
 =head1 SYNOPSIS
 
+    # Legacy API
     use File::Find::Rule::Age;
     my @old_files = find( file => age => [ older => '1M' ], in => '.' );
     my @today     = find( file => age => [ newer => '1D' ], in => '.' );
@@ -80,14 +90,17 @@ Pedro Figueiredo, C<< <pedro.figueiredo at sns.bskyb.com> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-find-find-rule-age at rt.cpan.org>, or through the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Find-Find-Rule-Age>.  I will be notified, and then you'll automatically be notified of progress on your bug as I make changes.
+Please report any bugs or feature requests to
+C<bug-find-find-rule-age at rt.cpan.org>, or through the web interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Find-Find-Rule-Age>.
+I will be notified, and then you'll automatically be notified of progress
+on your bug as I make changes.
 
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
     perldoc Find::Find::Rule::Age
-
 
 You can also look for information at:
 
@@ -118,6 +131,8 @@ Richard Clamp, the author of File::Find::Rule, for putting up with me.
 =head1 COPYRIGHT
 
 Copyright (C) 2008 Sky Network Services. All Rights Reserved.
+
+Copyright (C) 2013-2014 Jens Rehsack. All Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
