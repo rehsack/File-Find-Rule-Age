@@ -3,7 +3,7 @@ package File::Find::Rule::Age;
 use strict;
 use warnings;
 
-our $VERSION = "0.301";
+our $VERSION = "0.302";
 
 use base "File::Find::Rule";
 
