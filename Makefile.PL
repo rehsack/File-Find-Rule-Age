@@ -6,9 +6,10 @@ use 5.008001;
 use ExtUtils::MakeMaker;
 
 my %RUN_DEPS = (
-    'File::Find::Rule' => '0.30',
     'DateTime'         => '0.42',
+    'File::Find::Rule' => '0.30',
     'File::stat'       => 0,
+    'Params::Util'     => '0.37',
 );
 my %CONFIGURE_DEPS = (
     'ExtUtils::MakeMaker' => 0,

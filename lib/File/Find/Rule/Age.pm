@@ -3,15 +3,14 @@ package File::Find::Rule::Age;
 use strict;
 use warnings;
 
-use Carp 'carp';
-use File::Find::Rule;
-use base qw( File::Find::Rule );
-use vars qw( $VERSION @EXPORT );
-@EXPORT  = @File::Find::Rule::EXPORT;
-$VERSION = "0.301";
+our $VERSION = "0.301";
 
+use base "File::Find::Rule";
+
+use Carp 'carp';
 use DateTime;
 use File::stat;
+use Params::Util qw(_STRING _NONNEGINT _INSTANCE);
 
 my %mapping = (
     "D" => "days",
@@ -32,7 +31,7 @@ sub File::Find::Rule::age
 {
     my ( $me, $criterion, $age ) = @_;
     my ( $interval, $unit ) = ( $age =~ m/^(\d+)([DWMYhms])$/ );
-    return carp "Interval or Unit missing" unless ( $interval and $unit );
+    return carp "Duration or Unit missing" unless ( $interval and $unit );
 
     $criterion = lc($criterion);
     defined $criteria{$criterion} or return carp "Invalid criterion: $criterion";
@@ -52,6 +51,360 @@ sub File::Find::Rule::age
     $self->exec($sub2exec);
 }
 
+sub File::Find::Rule::modified_before
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->mtime < stat($ts)->mtime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->mtime < $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->mtime < $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->mtime < $dt->epoch;
+        }
+    );
+}
+
+sub File::Find::Rule::modified_until
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->mtime <= stat($ts)->mtime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->mtime <= $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->mtime <= $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->mtime <= $dt->epoch;
+        }
+    );
+}
+
+sub File::Find::Rule::modified_since
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->mtime >= stat($ts)->mtime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->mtime >= $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->mtime >= $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->mtime >= $dt->epoch;
+        }
+    );
+}
+
+sub File::Find::Rule::modified_after
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->mtime > stat($ts)->mtime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->mtime > $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->mtime > $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->mtime > $dt->epoch;
+        }
+    );
+}
+
+#############################################################################
+
+sub File::Find::Rule::accessed_before
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->atime < stat($ts)->atime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->atime < $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->atime < $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->atime < $dt->epoch;
+        }
+    );
+}
+
+sub File::Find::Rule::accessed_until
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->atime <= stat($ts)->atime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->atime <= $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->atime <= $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->atime <= $dt->epoch;
+        }
+    );
+}
+
+sub File::Find::Rule::accessed_since
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->atime >= stat($ts)->atime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->atime >= $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->atime >= $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->atime >= $dt->epoch;
+        }
+    );
+}
+
+sub File::Find::Rule::accessed_after
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->atime > stat($ts)->atime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->atime > $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->atime > $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->atime > $dt->epoch;
+        }
+    );
+}
+
+#############################################################################
+
+sub File::Find::Rule::created_before
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->ctime < stat($ts)->ctime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->ctime < $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->ctime < $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->ctime < $dt->epoch;
+        }
+    );
+}
+
+sub File::Find::Rule::created_until
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->ctime <= stat($ts)->ctime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->ctime <= $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->ctime <= $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->ctime <= $dt->epoch;
+        }
+    );
+}
+
+sub File::Find::Rule::created_since
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->ctime >= stat($ts)->ctime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->ctime >= $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->ctime >= $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->ctime >= $dt->epoch;
+        }
+    );
+}
+
+sub File::Find::Rule::created_after
+{
+    my ( $me, $ts ) = @_;
+
+    my $self = $me->_force_object;
+    _STRING($ts) and -e $ts and return $self->exec(
+        sub {
+            stat($_)->ctime > stat($ts)->ctime;
+        }
+    );
+
+    _NONNEGINT($ts) and return $self->exec(
+        sub {
+            stat($_)->ctime > $ts;
+        }
+    );
+    _INSTANCE( $ts, "DateTime" ) and return $self->exec(
+        sub {
+            stat($_)->ctime > $ts->epoch;
+        }
+    );
+    _INSTANCE( $ts, "DateTime::Duration" ) and return $self->exec(
+        sub {
+            my $dt = DateTime->now() - $ts;
+            stat($_)->ctime > $dt->epoch;
+        }
+    );
+}
+
+#############################################################################
+
 1;
 __END__
 
@@ -63,8 +416,8 @@ File::Find::Rule::Age - rule to match on file age
 
     # Legacy API
     use File::Find::Rule::Age;
-    my @old_files = find( file => age => [ older => '1M' ], in => '.' );
-    my @today     = find( file => age => [ newer => '1D' ], in => '.' );
+    my @old_files = find( file   => age => [ older => '1M' ], in => '.' );
+    my @today     = find( exists => age => [ newer => '1D' ], in => '.' );
 
 =head1 DESCRIPTION
 
@@ -72,21 +425,99 @@ File::Find::Rule::Age makes it easy to search for files based on their age.
 DateTime and File::stat are used to do the behind the scenes work, with
 File::Find::Rule doing the Heavy Lifting.
 
-By 'age' I mean 'time elapsed since mtime' (the last time the file was
-modified).
-
 =head1 FUNCTIONS
 
-=head2 ->age( [ $criterion => $age ] )
+=head2 Legacy Interface
 
-$criterion must be one of "older" or "newer".
-$age must match /^(\d+)([DWMYhms])$/ where D, W, M, Y, h, m and s are "day(s)",
+    age( [ $criterion => $age ] )
+
+=over 4
+
+=item $criterion
+
+must be one of "older" or "newer", respectively.
+
+=item $age
+
+must match /^(\d+)([DWMYhms])$/ where D, W, M, Y, h, m and s are "day(s)",
 "week(s)", "month(s)", "year(s)", "hour(s)", "minute(s)"  and "second(s)",
 respectively - I bet you weren't expecting that.
 
+The given interval is subtracted from C<now> for every file which is checked
+to ensure search rules instantiated once and executed several times in
+process lifetime.
+
+=back
+
+By 'age' I mean 'time elapsed after mtime' (the last time the file was
+modified) - without the equal timestamp.
+
+    # now is 2014-05-01T00:00:00, start of this years workers day
+    # let's see what has been worked last week
+    my @old_files = find( file => age => [ older => "1W" ], in => $ENV{HOME} );
+    # @old_files will now contain all files changed 2014-04-24T00:00:01 or later,
+    # 2014-04-24T00:00:00 is ignored
+
+=head2 Modern API
+
+The modern API provides 16 functions to match timestamps:
+
+             | before  | until    | since    | after
+   ----------+---------+----------+----------+---------
+    modfied  | mtime < | mtime <= | mtime >= | mtime >
+   ----------+---------+----------+----------+---------
+    accessed | atime < | atime <= | atime >= | atime >
+   ----------+---------+----------+----------+---------
+    created  | ctime < | ctime <= | ctime >= | ctime >
+   ----------+---------+----------+----------+---------
+
+Each function takes one argument - the referring timestamp. Following
+representations are supported (in order of check):
+
+=over 4
+
+=item File name
+
+The corresponding C<mtime>, C<atime> or C<ctime> or the specified file is
+used to do the appropriate equation, respectively.
+
+If a relative path name is specified and the current working directory is
+changed since rule instantiation, the result is undefined.
+
+=item seconds since epoch
+
+Each's file C<mtime>, C<atime> or C<ctime> is compared as requested to
+given number.
+
+=item DateTime object
+
+Each's file C<mtime>, C<atime> or C<ctime> is compared as requested to
+given DateTime.
+
+=item DateTime::Duration object
+
+Each's file C<mtime>, C<atime> or C<ctime> is compared as requested to
+given C<< now - $duration >>. C<now> is determined at each check again,
+for same reasons as in legacy API.
+
+=back
+
+=head3 Examples
+
+    use File::Find::Rule;
+    use File::Fine::Rule::Age;
+
+    my $today = DateTime->now->truncate( to => "today" );
+    my @today = find( owned => modified_since => $today, in => $ENV{PROJECT_ROOT} );
+
+    my @updated = find( file => mofified_after => $self->get_cache_timestamp,
+                        in => $self->inbox );
+
 =head1 AUTHOR
 
-Pedro Figueiredo, C<< <pedro.figueiredo at sns.bskyb.com> >>
+Pedro Figueiredo, C<< <pedro period figueiredo at sns dot bskyb dotty com> >>
+
+Jens Rehsack, C << rehsack at cpan dot org
 
 =head1 BUGS
 
