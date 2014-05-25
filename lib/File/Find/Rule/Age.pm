@@ -460,7 +460,7 @@ modified) - without the equal timestamp.
 
 =head2 Modern API
 
-The modern API provides 16 functions to match timestamps:
+The modern API provides 12 functions to match timestamps:
 
              | before  | until    | since    | after
    ----------+---------+----------+----------+---------
