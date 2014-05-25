@@ -30,3 +30,4 @@ File-Find-Rule-Age.*
 \bxt
 ^MYMETA\.json$
 ^MYMETA\..*$
+cover_db
