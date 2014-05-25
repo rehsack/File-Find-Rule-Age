@@ -17,7 +17,11 @@ my %CONFIGURE_DEPS = (
 my %BUILD_DEPS = ();
 
 my %TEST_DEPS = (
-    'Test::More' => 0.90,
+    'FindBin'     => 0,
+    'File::Touch' => 0,
+    'File::Spec'  => 0,
+    'File::Temp'  => 0,
+    'Test::More'  => 0.90,
 );
 
 WriteMakefile1(
