@@ -78,6 +78,7 @@ sub File::Find::Rule::modified_before
             stat($_)->mtime < $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 sub File::Find::Rule::modified_until
@@ -107,6 +108,7 @@ sub File::Find::Rule::modified_until
             stat($_)->mtime <= $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 sub File::Find::Rule::modified_since
@@ -136,6 +138,7 @@ sub File::Find::Rule::modified_since
             stat($_)->mtime >= $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 sub File::Find::Rule::modified_after
@@ -165,6 +168,7 @@ sub File::Find::Rule::modified_after
             stat($_)->mtime > $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 #############################################################################
@@ -196,6 +200,7 @@ sub File::Find::Rule::accessed_before
             stat($_)->atime < $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 sub File::Find::Rule::accessed_until
@@ -225,6 +230,7 @@ sub File::Find::Rule::accessed_until
             stat($_)->atime <= $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 sub File::Find::Rule::accessed_since
@@ -254,6 +260,7 @@ sub File::Find::Rule::accessed_since
             stat($_)->atime >= $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 sub File::Find::Rule::accessed_after
@@ -283,6 +290,7 @@ sub File::Find::Rule::accessed_after
             stat($_)->atime > $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 #############################################################################
@@ -314,6 +322,7 @@ sub File::Find::Rule::created_before
             stat($_)->ctime < $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 sub File::Find::Rule::created_until
@@ -343,6 +352,7 @@ sub File::Find::Rule::created_until
             stat($_)->ctime <= $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 sub File::Find::Rule::created_since
@@ -372,6 +382,7 @@ sub File::Find::Rule::created_since
             stat($_)->ctime >= $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 sub File::Find::Rule::created_after
@@ -401,6 +412,7 @@ sub File::Find::Rule::created_after
             stat($_)->ctime > $dt->epoch;
         }
     );
+    carp "Cannot parse reference";
 }
 
 #############################################################################

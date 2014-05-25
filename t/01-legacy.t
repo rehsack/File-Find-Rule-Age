@@ -35,4 +35,24 @@ my @newer = find(
 );
 is_deeply( \@newer, [ File::Spec->catfile( $dir_name, 'newer' ) ], "newer" );
 
+SCOPE:
+{
+    my @warns;
+    local $SIG{__WARN__} = sub { push @warns, @_ };
+    my @fail = find(
+        file => age => [ "ancient" => "1D" ],
+        in   => $dir_name
+    );
+    cmp_ok( scalar @warns, "==", 1, "catched 1 warning for invalid criterion" );
+    like($warns[0], qr/^Invalid criterion: ancient/, "Criterion warning" );
+
+    @warns = ();
+    @fail = find(
+        file => age => [ "Newer" => "Mein, Dein Tag" ],
+        in   => $dir_name
+    );
+    cmp_ok( scalar @warns, "==", 1, "catched 1 warning for missing operands" );
+    like($warns[0], qr/^Duration or Unit missing/, "Duration/Unit warning" );
+}
+
 done_testing;
