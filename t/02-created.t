@@ -43,24 +43,24 @@ my @fl;
 
 @fl = find(
     file => created_since => File::Spec->catfile( $cmp_dir_name, 'now' ),
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'now' ) ], "created_since now (File)" );
+is_deeply( \@fl, [ 'now' ], "created_since now (File)" );
 @fl = find(
     file => created_since => $now->epoch,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'now' ) ], "created_since now (Number)" );
+is_deeply( \@fl, [ 'now' ], "created_since now (Number)" );
 @fl = find(
     file => created_since => $now,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'now' ) ], "created_since now (DateTime)" );
+is_deeply( \@fl, [ 'now' ], "created_since now (DateTime)" );
 @fl = find(
     file => created_since => $now - $now,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'now' ) ], "created_since now (DateTime::Duration)" );
+is_deeply( \@fl, [ 'now' ], "created_since now (DateTime::Duration)" );
 
 SCOPE:
 {
@@ -68,7 +68,7 @@ SCOPE:
     local $SIG{__WARN__} = sub { push @warns, @_ };
     my @fail = find(
         file => created_since => "Halli-Galli",
-        in   => $dir_name
+        relative => in   => $dir_name
     );
     cmp_ok( scalar @warns, "==", 1, "catched 1 warning for missing 2nd operand" );
     like($warns[0], qr/^Cannot parse reference/, "Missing 2nd operator warning seen");
@@ -76,24 +76,24 @@ SCOPE:
 
 @fl = find(
     file => created_after => File::Spec->catfile( $cmp_dir_name, 'today' ),
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'now' ) ], "created_after today (File)" ) or diag( explain( \@fl ) );
+is_deeply( \@fl, [ 'now' ], "created_after today (File)" ) or diag( explain( \@fl ) );
 @fl = find(
     file => created_after => $today->epoch,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'now' ) ], "created_after today (Number)" ) or diag( explain( \@fl ) );
+is_deeply( \@fl, [ 'now' ], "created_after today (Number)" ) or diag( explain( \@fl ) );
 @fl = find(
     file => created_after => $today,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'now' ) ], "created_after today (DateTime)" ) or diag( explain( \@fl ) );
+is_deeply( \@fl, [ 'now' ], "created_after today (DateTime)" ) or diag( explain( \@fl ) );
 @fl = find(
     file => created_after => $now - $today,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'now' ) ], "created_after today (DateTime::Duration)" )
+is_deeply( \@fl, [ 'now' ], "created_after today (DateTime::Duration)" )
   or diag( explain( \@fl ) );
 
 SCOPE:
@@ -102,7 +102,7 @@ SCOPE:
     local $SIG{__WARN__} = sub { push @warns, @_ };
     my @fail = find(
         file => created_after => "Halli-Galli",
-        in   => $dir_name
+        relative => in   => $dir_name
     );
     cmp_ok( scalar @warns, "==", 1, "catched 1 warning for missing 2nd operand" );
     like($warns[0], qr/^Cannot parse reference/, "Missing 2nd operator warning seen");
@@ -110,26 +110,26 @@ SCOPE:
 
 @fl = find(
     file => created_until => File::Spec->catfile( $cmp_dir_name, 'yesterday' ),
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'yesterday' ) ], "created_until yesterday (File)" ) or diag( explain( \@fl ) );
+is_deeply( \@fl, [ 'yesterday' ], "created_until yesterday (File)" ) or diag( explain( \@fl ) );
 @fl = find(
     file => created_until => $yesterday->epoch,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'yesterday' ) ], "created_until yesterday (Number)" )
+is_deeply( \@fl, [ 'yesterday' ], "created_until yesterday (Number)" )
   or diag( explain( \@fl ) );
 @fl = find(
     file => created_until => $yesterday,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'yesterday' ) ], "created_until yesterday (DateTime)" )
+is_deeply( \@fl, [ 'yesterday' ], "created_until yesterday (DateTime)" )
   or diag( explain( \@fl ) );
 @fl = find(
     file => created_until => $now - $yesterday,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'yesterday' ) ], "created_until yesterday (DateTime::Duration)" )
+is_deeply( \@fl, [ 'yesterday' ], "created_until yesterday (DateTime::Duration)" )
   or diag( explain( \@fl ) );
 
 SCOPE:
@@ -138,7 +138,7 @@ SCOPE:
     local $SIG{__WARN__} = sub { push @warns, @_ };
     my @fail = find(
         file => created_until => "Halli-Galli",
-        in   => $dir_name
+        relative => in   => $dir_name
     );
     cmp_ok( scalar @warns, "==", 1, "catched 1 warning for missing 2nd operand" );
     like($warns[0], qr/^Cannot parse reference/, "Missing 2nd operator warning seen");
@@ -146,26 +146,26 @@ SCOPE:
 
 @fl = find(
     file => created_before => File::Spec->catfile( $cmp_dir_name, 'lastday' ),
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'yesterday' ) ], "created_before lastday (File)" ) or diag( explain( \@fl ) );
+is_deeply( \@fl, [ 'yesterday' ], "created_before lastday (File)" ) or diag( explain( \@fl ) );
 @fl = find(
     file => created_before => $lastday->epoch,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'yesterday' ) ], "created_before lastday (Number)" )
+is_deeply( \@fl, [ 'yesterday' ], "created_before lastday (Number)" )
   or diag( explain( \@fl ) );
 @fl = find(
     file => created_before => $lastday,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'yesterday' ) ], "created_before lastday (DateTime)" )
+is_deeply( \@fl, [ 'yesterday' ], "created_before lastday (DateTime)" )
   or diag( explain( \@fl ) );
 @fl = find(
     file => created_before => $now - $lastday,
-    in   => $dir_name
+    relative => in   => $dir_name
 );
-is_deeply( \@fl, [ File::Spec->catfile( $dir_name, 'yesterday' ) ], "created_before lastday (DateTime::Duration)" )
+is_deeply( \@fl, [ 'yesterday' ], "created_before lastday (DateTime::Duration)" )
   or diag( explain( \@fl ) );
 
 SCOPE:
@@ -174,7 +174,7 @@ SCOPE:
     local $SIG{__WARN__} = sub { push @warns, @_ };
     my @fail = find(
         file => created_before => "Halli-Galli",
-        in   => $dir_name
+        relative => in   => $dir_name
     );
     cmp_ok( scalar @warns, "==", 1, "catched 1 warning for missing 2nd operand" );
     like($warns[0], qr/^Cannot parse reference/, "Missing 2nd operator warning seen");
