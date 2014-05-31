@@ -17,14 +17,21 @@ my $dir_name = $test_dir->dirname;
 my $cmp_test_dir = File::Temp->newdir( CLEANUP => 1 );
 my $cmp_dir_name = $cmp_test_dir->dirname;
 
-my $now   = DateTime->now();
-my $today = DateTime->now();
-$today->truncate( to => 'day' );
-my $yesterday = DateTime->now();
-$yesterday->truncate( to => 'day' );
-$yesterday->subtract( days => 2 );
-my $lastday = DateTime->now();
-$lastday->subtract( days => 1 );
+my ( $now, $today, $yesterday, $lastday ) = ( DateTime->now(), DateTime->now(), DateTime->now(), DateTime->now() );
+if ( $ENV{AUTOMATED_TESTING} )
+{
+    # just to have a difference - avoid $now is 0:00:00
+    $today->subtract( hours => 1 );
+    $yesterday->subtract( hours => 2 );
+    $lastday->subtract( hours => 3 );
+}
+else
+{
+    $today->truncate( to => 'day' );
+    $yesterday->truncate( to => 'day' );
+    $yesterday->subtract( days => 2 );
+    $lastday->subtract( days => 1 );
+}
 
 File::Touch->new( atime => $now->epoch )->touch( File::Spec->catfile( $dir_name,     'now' ) );
 File::Touch->new( atime => $now->epoch )->touch( File::Spec->catfile( $cmp_dir_name, 'now' ) );
