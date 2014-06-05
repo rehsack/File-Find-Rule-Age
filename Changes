@@ -1,5 +1,8 @@
 Revision history for File-Find-Rule-Age
 
+0.302	2014-06-nn
+    - fix some test-issues seen during smoking
+
 0.301	2014-05-25
     - introduce a new API to allow one easier to choose operator
       (<, <=, >=, >) and operands (mtime, atime, ctime) on the
