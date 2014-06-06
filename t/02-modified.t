@@ -22,15 +22,15 @@ if ( $ENV{AUTOMATED_TESTING} )
 {
     # just to have a difference - avoid $now is 0:00:00
     $today->subtract( hours => 1 );
-    $yesterday->subtract( hours => 2 );
-    $lastday->subtract( hours => 3 );
+    $lastday->subtract( hours => 2 );
+    $yesterday->subtract( hours => 3 );
 }
 else
 {
     $today->truncate( to => 'day' );
+    $lastday->subtract( days => 1 );
     $yesterday->truncate( to => 'day' );
     $yesterday->subtract( days => 2 );
-    $lastday->subtract( days => 1 );
 }
 
 File::Touch->new( time => $now->epoch )->touch( File::Spec->catfile( $dir_name,     'now' ) );
